@@ -1,30 +1,27 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { LoginScreen, RegisterScreen, WelcomeScreen } from './screens'
+import { AuthContextProvider, useAuth } from './AuthContextProvider'
 
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
 export type RootStackParamList = {
-  Welcome: { onStart: () => void }
+  Welcome: undefined
   Login: undefined
   Register: undefined
 }
 
 const RootStack = createNativeStackNavigator<RootStackParamList>()
 
-export default function App () {
-  const [isFirstTime, setIsFirstTime] = useState(true)
+const Navigation = () => {
+  const { isFirstTime } = useAuth()
 
   return (
     <NavigationContainer>
       <RootStack.Navigator>
         {isFirstTime
           ? (
-          <RootStack.Screen
-            name="Welcome"
-            component={WelcomeScreen}
-            initialParams={{ onStart: () => setIsFirstTime(false) }}
-          />
+          <RootStack.Screen name="Welcome" component={WelcomeScreen} />
             )
           : (
           <RootStack.Group>
@@ -34,5 +31,13 @@ export default function App () {
             )}
       </RootStack.Navigator>
     </NavigationContainer>
+  )
+}
+
+export default function App () {
+  return (
+    <AuthContextProvider>
+      <Navigation />
+    </AuthContextProvider>
   )
 }

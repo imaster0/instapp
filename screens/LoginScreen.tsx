@@ -1,7 +1,7 @@
 import React from 'react'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { Button, Text, View } from 'react-native'
-import { RootStackParamList } from 'App'
+import { RootStackParamList } from '../App'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>
 
