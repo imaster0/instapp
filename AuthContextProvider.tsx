@@ -1,4 +1,11 @@
-import React, { createContext, ReactNode, useContext, useState } from 'react'
+import React, {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState
+} from 'react'
+import { getItem, storeItem } from './Storage'
 
 interface Props {
   children: ReactNode
@@ -23,7 +30,20 @@ export const AuthContextProvider = ({ children }: Props) => {
   const [isFirstTime, setIsFirstTime] = useState(true)
 
   const login = () => setIsSignedIn(true)
-  const startJourney = () => setIsFirstTime(false)
+  const startJourney = async () => {
+    setIsFirstTime(false)
+    await storeItem('@isFirstTime', false)
+  }
+
+  useEffect(() => {
+    const loadData = async () => {
+      const isFirstTime = await getItem<boolean>('@isFirstTime')
+      if (isFirstTime !== null) {
+        setIsFirstTime(isFirstTime)
+      }
+    }
+    loadData()
+  }, [])
 
   return (
     <AuthContext.Provider
