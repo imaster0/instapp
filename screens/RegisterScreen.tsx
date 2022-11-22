@@ -21,7 +21,9 @@ const RegisterScreen = () => {
   const password = useRef({})
   password.current = watch('password', '')
 
-  const onSubmit: SubmitHandler<RegisterInputs> = async (data) => await signUp(data)
+  const onSubmit: SubmitHandler<RegisterInputs> = async (
+    data: RegisterInputs
+  ) => await signUp({ email: data.email, password: data.password })
 
   return (
     <View>

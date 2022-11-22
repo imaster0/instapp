@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-floating-promises */
 import React, {
   createContext,
   ReactNode,
@@ -5,6 +6,7 @@ import React, {
   useEffect,
   useState
 } from 'react'
+import { client } from './Api'
 import { getItem, storeItem } from './Storage'
 
 interface Props {
@@ -12,15 +14,15 @@ interface Props {
 }
 
 export interface AuthContextProp {
-  login: () => void
-  startJourney: () => void
+  login: (response: any) => Promise<void>
+  startJourney: () => Promise<void>
   isFirstTime: boolean
   isSignedIn: boolean
 }
 
 export const AuthContext = createContext<AuthContextProp>({
-  login () {},
-  startJourney () {},
+  login: async (response: any) => {},
+  startJourney: async () => {},
   isFirstTime: true,
   isSignedIn: false
 })
@@ -29,7 +31,10 @@ export const AuthContextProvider = ({ children }: Props) => {
   const [isSignedIn, setIsSignedIn] = useState(false)
   const [isFirstTime, setIsFirstTime] = useState(true)
 
-  const login = () => setIsSignedIn(true)
+  const login = async (response: any) => {
+    console.log(response)
+  }
+
   const startJourney = async () => {
     setIsFirstTime(false)
     await storeItem('@isFirstTime', false)
@@ -38,8 +43,12 @@ export const AuthContextProvider = ({ children }: Props) => {
   useEffect(() => {
     const loadData = async () => {
       const isFirstTime = await getItem<boolean>('@isFirstTime')
+      const user = await client.auth.getUser()
       if (isFirstTime !== null) {
         setIsFirstTime(isFirstTime)
+      }
+      if (user !== null) {
+        setIsSignedIn(true)
       }
     }
     loadData()
