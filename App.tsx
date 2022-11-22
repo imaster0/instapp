@@ -4,7 +4,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { LoginScreen, RegisterScreen, WelcomeScreen } from './screens'
 import { AuthContextProvider, useAuth } from './AuthContextProvider'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import { Text } from 'react-native'
+import DashboardScreen from './screens/dashboard/DashboardScreen'
+import PostScreen from './screens/dashboard/PostScreen'
+import ProfileScreen from './screens/dashboard/ProfileScreen'
 
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
 export type RootStackParamList = {
@@ -15,13 +17,23 @@ export type RootStackParamList = {
 
 const RootStack = createNativeStackNavigator<RootStackParamList>()
 const MainTabNavigator = createBottomTabNavigator()
+const DashboardStack = createNativeStackNavigator()
+
+const DashboardNavigation = () => (
+  <DashboardStack.Navigator screenOptions={{ title: '' }}>
+    <DashboardStack.Screen name="dashboard" component={DashboardScreen} />
+    <DashboardStack.Screen name="post" component={PostScreen} />
+    <DashboardStack.Screen name="profile" component={ProfileScreen} />
+  </DashboardStack.Navigator>
+)
 
 const SignedInNavigation = () => (
-  <MainTabNavigator.Navigator>
-    <MainTabNavigator.Screen
-      name="Signed in"
-      component={() => <Text>Signed in</Text>}
-    />
+  <MainTabNavigator.Navigator
+    screenOptions={{
+      headerShown: false
+    }}
+  >
+    <MainTabNavigator.Screen name="Dashboard" component={DashboardNavigation} />
   </MainTabNavigator.Navigator>
 )
 
