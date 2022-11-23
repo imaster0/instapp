@@ -7,6 +7,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import DashboardScreen from './screens/dashboard/DashboardScreen'
 import PostScreen from './screens/dashboard/PostScreen'
 import ProfileScreen from './screens/dashboard/ProfileScreen'
+import { AntDesign } from '@expo/vector-icons'
+import theme from './Theme'
 
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
 export type RootStackParamList = {
@@ -30,10 +32,44 @@ const DashboardNavigation = () => (
 const SignedInNavigation = () => (
   <MainTabNavigator.Navigator
     screenOptions={{
-      headerShown: false
+      headerShown: false,
+      tabBarActiveBackgroundColor: theme.colors.primary
     }}
   >
-    <MainTabNavigator.Screen name="Dashboard" component={DashboardNavigation} />
+    <MainTabNavigator.Screen
+      name="Dashboard"
+      component={DashboardNavigation}
+      options={{
+        tabBarShowLabel: false,
+        tabBarIcon: () => <AntDesign name="home" size={24} color="black" />
+      }}
+    />
+    <MainTabNavigator.Screen
+      name="Search"
+      component={DashboardNavigation}
+      options={{
+        tabBarShowLabel: false,
+        tabBarIcon: () => <AntDesign name="search1" size={24} color="black" />
+      }}
+    />
+    <MainTabNavigator.Screen
+      name="NewPost"
+      component={DashboardNavigation}
+      options={{
+        tabBarShowLabel: false,
+        tabBarIcon: () => (
+          <AntDesign name="pluscircleo" size={24} color="black" />
+        )
+      }}
+    />
+    <MainTabNavigator.Screen
+      name="Profile"
+      component={DashboardNavigation}
+      options={{
+        tabBarShowLabel: false,
+        tabBarIcon: () => <AntDesign name="profile" size={24} color="black" />
+      }}
+    />
   </MainTabNavigator.Navigator>
 )
 
