@@ -1,8 +1,11 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import React, { useRef } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
-import { Button, Text, TextInput, View } from 'react-native'
+import { Button, StyleSheet, Text, View } from 'react-native'
 import { signUp } from '../Api'
+import Space from '../components/Space'
+import TextInput from '../components/TextInput'
+import theme from '../Theme'
 
 interface RegisterInputs {
   email: string
@@ -26,20 +29,22 @@ const RegisterScreen = () => {
   ) => await signUp({ email: data.email, password: data.password })
 
   return (
-    <View>
-      <Controller
-        control={control}
-        {...register('email', { required: true })}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            placeholder="Email"
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-          />
-        )}
-      />
-      {errors.email != null && <Text>This field is required</Text>}
+    <Space style={styles.screen}>
+      <View>
+        <Controller
+          control={control}
+          {...register('email', { required: true })}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              placeholder="Email"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+            />
+          )}
+        />
+        {errors.email != null && <Text>This field is required</Text>}
+      </View>
       <Controller
         control={control}
         {...register('password', { required: true })}
@@ -53,26 +58,36 @@ const RegisterScreen = () => {
           />
         )}
       />
-      <Controller
-        control={control}
-        name="passwordConfirmation"
-        rules={{ validate: (value) => password.current === value || 'Differ' }}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            placeholder="Password confirmation"
-            secureTextEntry
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-          />
+      <View>
+        <Controller
+          control={control}
+          name="passwordConfirmation"
+          rules={{
+            validate: (value) => password.current === value || 'Differ'
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              placeholder="Password confirmation"
+              secureTextEntry
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+            />
+          )}
+        />
+        {errors.passwordConfirmation != null && (
+          <Text>{errors.passwordConfirmation.message}</Text>
         )}
-      />
-      {errors.passwordConfirmation != null && (
-        <Text>{errors.passwordConfirmation.message}</Text>
-      )}
+      </View>
       <Button title="Sign Up" onPress={handleSubmit(onSubmit)} />
-    </View>
+    </Space>
   )
 }
+
+const styles = StyleSheet.create({
+  screen: {
+    padding: theme.margins.screen
+  }
+})
 
 export default RegisterScreen

@@ -1,10 +1,13 @@
 import React from 'react'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { Button, Text, TextInput, View } from 'react-native'
+import { Button, StyleSheet } from 'react-native'
+import TextInput from '../components/TextInput'
 import { RootStackParamList } from '../App'
 import { Controller, useForm } from 'react-hook-form'
 import { signIn } from '../Api'
 import { useAuth } from '../AuthContextProvider'
+import theme from '../Theme'
+import Space from '../components/Space'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>
 interface LoginInputs {
@@ -24,8 +27,7 @@ const LoginScreen = ({ navigation }: Props) => {
   }
 
   return (
-    <View>
-      <Text>Login</Text>
+    <Space style={styles.screen}>
       <Controller
         {...register('email', { required: true })}
         control={control}
@@ -54,8 +56,15 @@ const LoginScreen = ({ navigation }: Props) => {
 
       <Button title="Login" onPress={handleSubmit(onSubmit)} />
       <Button title="Sign up" onPress={() => navigation.navigate('Register')} />
-    </View>
+    </Space>
   )
 }
+
+const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    padding: theme.margins.screen
+  }
+})
 
 export default LoginScreen
