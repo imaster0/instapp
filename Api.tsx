@@ -11,7 +11,8 @@ import {
 export const client = createClient(URL, KEY, {
   auth: {
     detectSessionInUrl: false,
-    storage: AsyncStorage
+    storage: AsyncStorage,
+    autoRefreshToken: true
   }
 })
 
@@ -34,3 +35,22 @@ export const signIn = async (user: SignInWithPasswordCredentials) => {
 
   return response.data
 }
+
+export const uploadFile = async (fileBase64: string) =>
+  await client.storage.from('images').upload(Date.now().toString(), fileBase64)
+
+export const downloadFile = async (path: string) =>
+  await client.storage.from('images').download(path)
+
+export const addPost = async (description: string, path: string) =>
+  await client
+    .from('posts')
+    .insert({
+      description,
+      image_url: path
+    })
+    .limit(1)
+    .single()
+
+export const getPosts = async () =>
+  await client.from('posts').select('*').is('archived_at', null)

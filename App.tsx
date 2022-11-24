@@ -9,6 +9,8 @@ import PostScreen from './screens/dashboard/PostScreen'
 import ProfileScreen from './screens/dashboard/ProfileScreen'
 import { AntDesign } from '@expo/vector-icons'
 import theme from './Theme'
+import AddPostScreen from './screens/AddPostScreen'
+import SearchScreen from './screens/SearchScreen'
 
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
 export type RootStackParamList = {
@@ -46,7 +48,7 @@ const SignedInNavigation = () => (
     />
     <MainTabNavigator.Screen
       name="Search"
-      component={DashboardNavigation}
+      component={SearchScreen}
       options={{
         tabBarShowLabel: false,
         tabBarIcon: () => <AntDesign name="search1" size={24} color="black" />
@@ -54,7 +56,7 @@ const SignedInNavigation = () => (
     />
     <MainTabNavigator.Screen
       name="NewPost"
-      component={DashboardNavigation}
+      component={AddPostScreen}
       options={{
         tabBarShowLabel: false,
         tabBarIcon: () => (
@@ -64,7 +66,7 @@ const SignedInNavigation = () => (
     />
     <MainTabNavigator.Screen
       name="Profile"
-      component={DashboardNavigation}
+      component={ProfileScreen}
       options={{
         tabBarShowLabel: false,
         tabBarIcon: () => <AntDesign name="profile" size={24} color="black" />

@@ -1,8 +1,13 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 import { Text } from 'react-native'
 import styles from './styles'
 
-const Header = ({ children, style }) => (
+interface Props {
+  children: ReactNode
+  style?: object
+}
+
+const Header = ({ children, style }: Props) => (
   <Text style={[styles.default, style]}>{children}</Text>
 )
 

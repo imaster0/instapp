@@ -6,6 +6,7 @@ import React, {
   useEffect,
   useState
 } from 'react'
+import { ActivityIndicator } from 'react-native'
 import { client } from './Api'
 import { getItem, storeItem } from './Storage'
 
@@ -30,6 +31,7 @@ export const AuthContext = createContext<AuthContextProp>({
 export const AuthContextProvider = ({ children }: Props) => {
   const [isSignedIn, setIsSignedIn] = useState(false)
   const [isFirstTime, setIsFirstTime] = useState(true)
+  const [loading, setLoading] = useState<boolean>(false)
 
   const login = async (response: any) => {
     console.log(response)
@@ -42,6 +44,7 @@ export const AuthContextProvider = ({ children }: Props) => {
 
   useEffect(() => {
     const loadData = async () => {
+      setLoading(true)
       const isFirstTime = await getItem<boolean>('@isFirstTime')
       const user = await client.auth.getUser()
       if (isFirstTime !== null) {
@@ -50,17 +53,22 @@ export const AuthContextProvider = ({ children }: Props) => {
       if (user !== null) {
         setIsSignedIn(true)
       }
+      setLoading(false)
     }
     loadData()
   }, [])
 
-  return (
+  return loading
+    ? (
+    <ActivityIndicator size="small" color="#0000ff" />
+      )
+    : (
     <AuthContext.Provider
       value={{ isFirstTime, isSignedIn, login, startJourney }}
     >
       {children}
     </AuthContext.Provider>
-  )
+      )
 }
 
 export const useAuth = () => useContext(AuthContext)

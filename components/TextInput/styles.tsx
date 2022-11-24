@@ -6,7 +6,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderColor: 'grey',
     borderWidth: 1,
-    borderRadius: 15
+    borderRadius: 15,
+    width: '100%'
   }
 })
 

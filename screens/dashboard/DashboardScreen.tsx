@@ -1,24 +1,30 @@
 import { useNavigation } from '@react-navigation/native'
 import React, { useState } from 'react'
-import { FlatList, View } from 'react-native'
+import { Button, FlatList, View } from 'react-native'
+import { downloadFile, getPosts } from '../../Api'
 import Avatar from '../../components/Avatar'
 import Post from '../../components/Post'
+import Space from '../../components/Space'
+import { encode } from 'base64-arraybuffer'
 
 const DashboardScreen = () => {
   const navigation = useNavigation()
-  const [data, setData] = useState([
-    { name: 'First' },
-    { name: 'First' },
-    { name: 'First' },
-    { name: 'First' },
-    { name: 'First' }
-  ])
+  const [data, setData] = useState([])
   const fetchMoreData = () => {
-    setData([...data, { name: 'New' }])
+    // setData([...data, { name: 'New' }])
+  }
+
+  const loadPosts = async () => {
+    const response = await getPosts()
+    if (response.error != null) {
+      console.error(response.error)
+      return
+    }
+    seta
   }
 
   return (
-    <View>
+    <Space>
       <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
         <Avatar onPress={() => navigation.navigate('profile')} />
         <Avatar />
@@ -26,19 +32,20 @@ const DashboardScreen = () => {
         <Avatar />
         <Avatar />
       </View>
+      <Button title="Abc" onPress={loadPosts} />
       <FlatList
         contentContainerStyle={{ flexGrow: 1 }}
         data={data}
         renderItem={({ item }) => (
           <Post
-            name={item.name}
+            url={item.url}
             onImagePress={() => navigation.navigate('post')}
           />
         )}
         onEndReachedThreshold={0.2}
         onEndReached={fetchMoreData}
       />
-    </View>
+    </Space>
   )
 }
 

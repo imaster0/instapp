@@ -1,7 +1,8 @@
 const theme = {
   colors: {
     primary: '#BF785E',
-    secondary: '#6393A6'
+    secondary: '#6393A6',
+    danger: 'red'
   },
   fontSizes: {
     body: 16,
