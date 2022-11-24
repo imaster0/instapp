@@ -36,21 +36,38 @@ export const signIn = async (user: SignInWithPasswordCredentials) => {
   return response.data
 }
 
-export const uploadFile = async (fileBase64: string) =>
-  await client.storage.from('images').upload(Date.now().toString(), fileBase64)
+export const uploadFile = async (arrayBuffer: ArrayBuffer) =>
+  await client.storage
+    .from('images')
+    .upload(Date.now().toString(), arrayBuffer)
 
-export const downloadFile = async (path: string) =>
-  await client.storage.from('images').download(path)
+export const getPublicUrl = async (path: string) => {
+  const response = await client.storage.from('images').getPublicUrl(path)
+  return response.data.publicUrl
+}
 
-export const addPost = async (description: string, path: string) =>
+export const addPost = async (description: string, url: string) =>
   await client
     .from('posts')
     .insert({
       description,
-      image_url: path
+      image_url: url
     })
     .limit(1)
     .single()
 
-export const getPosts = async () =>
-  await client.from('posts').select('*').is('archived_at', null)
+export const getPosts = async () => {
+  const response = await client
+    .from('posts')
+    .select('*')
+    .is('archived_at', null)
+  return response.data
+}
+
+export const archivePost = async (id: number) =>
+  await client
+    .from('posts')
+    .update({
+      archived_at: new Date().toISOString()
+    })
+    .eq('id', id)

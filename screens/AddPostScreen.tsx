@@ -1,26 +1,28 @@
-import React, { useRef, useState } from 'react'
+import React, { useState } from 'react'
 import * as ImagePicker from 'expo-image-picker'
 import {
+  ActivityIndicator,
   Button,
   Image,
   KeyboardAvoidingView,
   Platform,
-  SafeAreaView,
   ScrollView,
-  Text,
-  View
+  Text
 } from 'react-native'
 import Space from '../components/Space'
 import TextInput from '../components/TextInput'
 import theme from '../Theme'
-import { addPost, uploadFile } from '../Api'
+import { addPost, getPublicUrl, uploadFile } from '../Api'
 import { useNavigation } from '@react-navigation/native'
+import { decode } from 'base64-arraybuffer'
+import { useAuth } from '../AuthContextProvider'
 
 const AddPostScreen = () => {
   const navigation = useNavigation()
   const [image, setImage] = useState<string | null>(null)
   const [title, setTitle] = useState<string>('')
   const [description, setDescription] = useState<string>('')
+  const { setLoading } = useAuth()
 
   const clear = () => {
     setImage(null)
@@ -29,13 +31,16 @@ const AddPostScreen = () => {
   }
 
   const handleSubmit = async () => {
+    setLoading(true)
     try {
-      const result = await uploadFile(image!)
-      await addPost(description, result.data!.path)
+      const result = await uploadFile(decode(image!))
+      const url = await getPublicUrl(result.data!.path)
+      await addPost(description, url)
       navigation.navigate('Dashboard')
     } catch (error) {
       console.error(error)
     }
+    setLoading(false)
   }
 
   const capturePhoto = async () => {
@@ -47,7 +52,7 @@ const AddPostScreen = () => {
     })
 
     if (!result.canceled) {
-      setImage(`data:image/jpg;base64,${result.assets[0].base64!}`)
+      setImage(result.assets[0].base64!)
     }
   }
 
@@ -62,7 +67,7 @@ const AddPostScreen = () => {
     })
 
     if (!result.canceled) {
-      setImage(`data:image/jpg;base64,${result.assets[0].base64!}`)
+      setImage(result.assets[0].base64!)
     }
   }
 
@@ -83,7 +88,10 @@ const AddPostScreen = () => {
           />
             )
           : (
-          <Image source={{ uri: image }} style={{ width: 400, height: 300 }} />
+          <Image
+            source={{ uri: `data:image/jpg;base64,${image}` }}
+            style={{ width: 400, height: 300 }}
+          />
             )}
 
         <Space

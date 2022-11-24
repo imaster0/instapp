@@ -1,27 +1,21 @@
 import { useNavigation } from '@react-navigation/native'
-import React, { useState } from 'react'
-import { Button, FlatList, View } from 'react-native'
-import { downloadFile, getPosts } from '../../Api'
+import React from 'react'
+import { FlatList, View } from 'react-native'
+import { getPosts } from '../../Api'
 import Avatar from '../../components/Avatar'
 import Post from '../../components/Post'
 import Space from '../../components/Space'
-import { encode } from 'base64-arraybuffer'
+import { useQuery } from '@tanstack/react-query'
 
 const DashboardScreen = () => {
   const navigation = useNavigation()
-  const [data, setData] = useState([])
-  const fetchMoreData = () => {
-    // setData([...data, { name: 'New' }])
-  }
-
-  const loadPosts = async () => {
-    const response = await getPosts()
-    if (response.error != null) {
-      console.error(response.error)
-      return
+  const { data } = useQuery({
+    queryKey: ['posts'],
+    queryFn: getPosts,
+    onSuccess (data) {
+      console.log(data)
     }
-    seta
-  }
+  })
 
   return (
     <Space>
@@ -32,18 +26,16 @@ const DashboardScreen = () => {
         <Avatar />
         <Avatar />
       </View>
-      <Button title="Abc" onPress={loadPosts} />
       <FlatList
         contentContainerStyle={{ flexGrow: 1 }}
         data={data}
         renderItem={({ item }) => (
           <Post
-            url={item.url}
+            id={item.id}
+            url={item.image_url}
             onImagePress={() => navigation.navigate('post')}
           />
         )}
-        onEndReachedThreshold={0.2}
-        onEndReached={fetchMoreData}
       />
     </Space>
   )

@@ -11,6 +11,7 @@ import { AntDesign } from '@expo/vector-icons'
 import theme from './Theme'
 import AddPostScreen from './screens/AddPostScreen'
 import SearchScreen from './screens/SearchScreen'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
 export type RootStackParamList = {
@@ -98,12 +99,16 @@ const Navigation = () => {
   )
 }
 
+const queryClient = new QueryClient()
+
 export default function App () {
   return (
-    <AuthContextProvider>
-      <NavigationContainer>
-        <Navigation />
-      </NavigationContainer>
-    </AuthContextProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthContextProvider>
+        <NavigationContainer>
+          <Navigation />
+        </NavigationContainer>
+      </AuthContextProvider>
+    </QueryClientProvider>
   )
 }

@@ -6,7 +6,7 @@ import React, {
   useEffect,
   useState
 } from 'react'
-import { ActivityIndicator } from 'react-native'
+import { ActivityIndicator, View } from 'react-native'
 import { client } from './Api'
 import { getItem, storeItem } from './Storage'
 
@@ -60,11 +60,13 @@ export const AuthContextProvider = ({ children }: Props) => {
 
   return loading
     ? (
-    <ActivityIndicator size="small" color="#0000ff" />
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <ActivityIndicator size="large" color="#0000ff" />
+    </View>
       )
     : (
     <AuthContext.Provider
-      value={{ isFirstTime, isSignedIn, login, startJourney }}
+      value={{ isFirstTime, isSignedIn, login, startJourney, setLoading }}
     >
       {children}
     </AuthContext.Provider>

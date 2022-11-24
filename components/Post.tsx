@@ -2,8 +2,9 @@ import React from 'react'
 import { Image, Text, TouchableHighlight, View } from 'react-native'
 
 const Post = ({
+  id,
+  url,
   name = 'Name',
-  url = 'https://i1.kwejk.pl/k/obrazki/2011/11/f1d8ba58b5924ff801e227530d9692a3.jpg',
   likes = [],
   comments = [],
   onImagePress
@@ -17,8 +18,8 @@ const Post = ({
     >
       <Image
         style={{
-          width: '100%',
-          height: 250
+          width: 400,
+          height: 300
         }}
         source={{
           uri: url
