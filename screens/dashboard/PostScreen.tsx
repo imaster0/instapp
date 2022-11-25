@@ -37,6 +37,10 @@ const PostScreen = ({ route }) => {
   })
 
   const sortedComments = useMemo(() => {
+    if (data?.comments == null) {
+      return
+    }
+
     const comments = data?.comments
     comments.sort((a, b) => a.id < b.id)
     return comments

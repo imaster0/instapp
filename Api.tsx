@@ -20,6 +20,20 @@ export const refreshSession = async () => {
   console.log('API: REFRESH SESSION')
   return await client.auth.refreshSession()
 }
+
+export const updateUser = async (id: number) => {
+  console.log('update user', id)
+  const response = await client
+    .from('users')
+    .update({
+      first_name: 'Jakub',
+      last_name: 'S',
+      image_url:
+        'https://upload.wikimedia.org/wikipedia/en/9/9a/Trollface_non-free.png'
+    })
+    .eq('uuid', id)
+}
+
 export const getAuth = async () => await client.auth.getUser()
 
 export const signUp = async (user: SignUpWithPasswordCredentials) => {
@@ -100,8 +114,9 @@ export const getPostsByDescription = async (search: string) => {
     .from('posts')
     .select('*, author:users (first_name, last_name), comments (text:body)')
     .is('archived_at', null)
-    .ilike('description', search)
-  console.log(response)
+    .ilike('description', `%${search}%`)
+    .limit(20)
+  // console.log(response)
   return response.data
 }
 
@@ -131,14 +146,23 @@ export const archivePost = async (id: number) => {
 
 export const getUser = async (id: any) => {
   console.log('API: GET USER', id)
-  const response = await client.from('users').select().eq('uuid', id).single()
-  console.log(response.data)
+  const response = await client
+    .from('users')
+    .select('*, posts (id, image_url, archived_at)')
+    .is('posts.archived_at', null)
+    .eq('uuid', id)
+    .single()
+  // console.log(response.data)
   return response.data
 }
 
-export const getUsers = async () => {
+export const getUsers = async (limit: number) => {
   console.log('API: GET USERS')
-  const response = await client.from('users').select('*')
+  const response = await client
+    .from('users')
+    .select('uuid, image_url')
+    .not('image_url', '')
+    .limit(limit)
   console.log(response)
   return response.data
 }
@@ -148,8 +172,9 @@ export const getUsersByName = async (search: string) => {
   const response = await client
     .from('users')
     .select('*')
-    .or(`first_name.ilike.${search},last_name.ilike.${search}`)
-  console.log(response)
+    .or(`first_name.ilike.%${search}%,last_name.ilike.%${search}%`)
+    .limit(20)
+  console.log(response.data)
   return response.data
 }
 

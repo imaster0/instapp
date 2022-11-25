@@ -1,40 +1,68 @@
 import React, { useState } from 'react'
-import { FlatList, Text, View } from 'react-native'
+import {
+  ActivityIndicator,
+  BackHandler,
+  FlatList,
+  Text,
+  View
+} from 'react-native'
 import Avatar from '../components/Avatar'
 import GridList from '../components/GridList'
 import Header from '../components/Header/Header'
 import Space from '../components/Space'
 import TextInput from '../components/TextInput'
 import theme from '../Theme'
+import { useQuery } from '@tanstack/react-query'
+import { getPosts, getPostsByDescription, getUsersByName } from '../Api'
+import { throttle } from 'lodash'
 
 const SearchScreen = () => {
   const [search, setSearch] = useState('')
-  const handleSearch = (value) => {
-    setSearch(value)
-  }
 
-  const images = ['a', 'b', 'c'].filter(
-    (label) => search === '' || label.indexOf(search)
-  )
+  const images = useQuery({
+    queryKey: ['posts-by-description', search],
+    queryFn: async () => await getPostsByDescription(search)
+  })
 
-  const people = [{ name: 'a' }, { name: 'a' }, { name: 'a' }].filter(
-    (person) => search === '' || person.name.indexOf(search)
-  )
+  const people = useQuery({
+    queryKey: ['people-by-name', search],
+    queryFn: async () => await getUsersByName(search)
+  })
+
+  const onSearch = throttle((search) => {
+    setSearch(search)
+    images.refetch()
+    people.refetch()
+  }, 800)
 
   const renderItem = ({ item }) => (
     <Space direction="row" style={{ alignItems: 'center' }}>
-      <Avatar />
-      <Text style={{ color: 'red' }}>{item.name}</Text>
+      <Avatar userId={item.uuid} imageUrl={item.image_url} />
+      <Text style={{ color: 'red' }}>
+        {item.first_name} {item.last_name}
+      </Text>
     </Space>
   )
 
   return (
-    <Space style={{ padding: theme.margins.screen }}>
-      <TextInput placeholder="Search" onChangeText={handleSearch} />
+    <Space style={{ padding: theme.margins.screen, paddingBottom: 100 }}>
+      <TextInput placeholder="Search" onChangeText={onSearch} />
       <Header>Images</Header>
-      <GridList posts={images} />
+      {images.isLoading
+        ? (
+        <ActivityIndicator style={{ flex: 1 }} />
+          )
+        : (
+        <GridList posts={images.data} />
+          )}
       <Header>People</Header>
-      <FlatList data={people} renderItem={renderItem} />
+      {people.isLoading
+        ? (
+        <ActivityIndicator style={{ flex: 1 }} />
+          )
+        : (
+        <FlatList data={people.data} renderItem={renderItem} />
+          )}
     </Space>
   )
 }

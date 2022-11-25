@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { FlatList, SafeAreaView, Text, View } from 'react-native'
-import { getPosts } from '../../Api'
+import { getPosts, getUsers } from '../../Api'
 import Avatar from '../../components/Avatar'
 import Post from '../../components/Post'
 import Space from '../../components/Space'
@@ -14,14 +14,21 @@ const DashboardScreen = () => {
     queryFn: getPosts
   })
 
+  const people = useQuery({
+    queryKey: ['people'],
+    queryFn: async () => await getUsers(5)
+  })
+
+  useEffect(() => {
+    console.log('PEOPLE', people)
+  }, [people.data])
+
   return (
     <Space>
       <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
-        <Avatar />
-        <Avatar />
-        <Avatar />
-        <Avatar />
-        <Avatar />
+        {people.data?.map((person, key) => (
+          <Avatar key={key} userId={person.uuid} imageUrl={person.image_url} />
+        ))}
       </View>
       {isError
         ? (

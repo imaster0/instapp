@@ -31,11 +31,13 @@ const ProfileScreen = ({ route }) => {
         padding: theme.margins.screen
       }}
     >
-      <Avatar />
+      <Avatar userId={userId} imageUrl={data?.image_url} />
       {userId === route.params.id && (
         <Button title="Log out" onPress={logOut} />
       )}
-      <Text>Somebody</Text>
+      <Text>
+        {data?.first_name} {data?.last_name}
+      </Text>
       <Text>
         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam
         eligendi soluta incidunt dolorum officia debitis minus ullam eaque
@@ -44,7 +46,10 @@ const ProfileScreen = ({ route }) => {
         ipsa soluta quas impedit laborum nam consectetur nisi enim amet corrupti
         quam. Ut.
       </Text>
-      <GridList posts={posts} style={{ paddingBottom: tabBarHeight + 50 }} />
+      <GridList
+        posts={data?.posts}
+        style={{ paddingBottom: tabBarHeight + 50 }}
+      />
     </Space>
   )
 }

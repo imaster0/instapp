@@ -7,7 +7,7 @@ import React, {
   useState
 } from 'react'
 import { ActivityIndicator, View } from 'react-native'
-import { getAuth } from './Api'
+import { getAuth, updateUser } from './Api'
 import { getItem, storeItem } from './Storage'
 
 interface Props {
