@@ -16,6 +16,7 @@ import { addPost, getPublicUrl, uploadFile } from '../Api'
 import { useNavigation } from '@react-navigation/native'
 import { decode } from 'base64-arraybuffer'
 import { useAuth } from '../AuthContextProvider'
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 
 const AddPostScreen = () => {
   const navigation = useNavigation()
@@ -23,6 +24,7 @@ const AddPostScreen = () => {
   const [title, setTitle] = useState<string>('')
   const [description, setDescription] = useState<string>('')
   const { setLoading } = useAuth()
+  const tabBarHeight = useBottomTabBarHeight()
 
   const clear = () => {
     setImage(null)
@@ -34,7 +36,7 @@ const AddPostScreen = () => {
     setLoading(true)
     try {
       const result = await uploadFile(decode(image!))
-      const url = await getPublicUrl(result.data!.path)
+      const url = await getPublicUrl(result!.path)
       await addPost(description, url)
       navigation.navigate('Dashboard')
     } catch (error) {
@@ -75,7 +77,7 @@ const AddPostScreen = () => {
     <KeyboardAvoidingView
       style={{ height: '100%' }}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={0}
+      keyboardVerticalOffset={tabBarHeight}
     >
       <ScrollView style={{ flex: 1 }}>
         {image == null
@@ -109,6 +111,7 @@ const AddPostScreen = () => {
           <TextInput
             onChangeText={(value) => setTitle(value)}
             returnKeyType="next"
+            value={title}
           />
           <Text>Description</Text>
           <TextInput
@@ -116,13 +119,10 @@ const AddPostScreen = () => {
             multiline
             numberOfLines={4}
             onChangeText={(value) => setDescription(value)}
+            value={description}
           />
           <Space direction="row" style={{ justifyContent: 'center' }}>
-            <Button
-              title="Cancel"
-              color={theme.colors.danger}
-              onPress={clear}
-            />
+            <Button title="Clear" color={theme.colors.danger} onPress={clear} />
             <Button title="Submit" onPress={handleSubmit} />
           </Space>
         </Space>

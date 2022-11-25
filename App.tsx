@@ -12,12 +12,19 @@ import theme from './Theme'
 import AddPostScreen from './screens/AddPostScreen'
 import SearchScreen from './screens/SearchScreen'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
 
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
 export type RootStackParamList = {
   Welcome: undefined
   Login: undefined
   Register: undefined
+}
+
+export type DashboardStackParamList = {
+  dashboard: undefined
+  post: { id: number }
+  profile: { id: string }
 }
 
 const RootStack = createNativeStackNavigator<RootStackParamList>()
@@ -27,54 +34,63 @@ const DashboardStack = createNativeStackNavigator()
 const DashboardNavigation = () => (
   <DashboardStack.Navigator screenOptions={{ title: '' }}>
     <DashboardStack.Screen name="dashboard" component={DashboardScreen} />
-    <DashboardStack.Screen name="post" component={PostScreen} />
+    <DashboardStack.Screen
+      name="post"
+      component={PostScreen}
+      options={({ route }) => ({ title: route.params.title || '' })}
+    />
     <DashboardStack.Screen name="profile" component={ProfileScreen} />
   </DashboardStack.Navigator>
 )
 
-const SignedInNavigation = () => (
-  <MainTabNavigator.Navigator
-    screenOptions={{
-      headerShown: false,
-      tabBarActiveBackgroundColor: theme.colors.primary
-    }}
-  >
-    <MainTabNavigator.Screen
-      name="Dashboard"
-      component={DashboardNavigation}
-      options={{
-        tabBarShowLabel: false,
-        tabBarIcon: () => <AntDesign name="home" size={24} color="black" />
+const SignedInNavigation = () => {
+  const { userId } = useAuth()
+
+  return (
+    <MainTabNavigator.Navigator
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveBackgroundColor: theme.colors.primary
       }}
-    />
-    <MainTabNavigator.Screen
-      name="Search"
-      component={SearchScreen}
-      options={{
-        tabBarShowLabel: false,
-        tabBarIcon: () => <AntDesign name="search1" size={24} color="black" />
-      }}
-    />
-    <MainTabNavigator.Screen
-      name="NewPost"
-      component={AddPostScreen}
-      options={{
-        tabBarShowLabel: false,
-        tabBarIcon: () => (
-          <AntDesign name="pluscircleo" size={24} color="black" />
-        )
-      }}
-    />
-    <MainTabNavigator.Screen
-      name="Profile"
-      component={ProfileScreen}
-      options={{
-        tabBarShowLabel: false,
-        tabBarIcon: () => <AntDesign name="profile" size={24} color="black" />
-      }}
-    />
-  </MainTabNavigator.Navigator>
-)
+    >
+      <MainTabNavigator.Screen
+        name="Dashboard"
+        component={DashboardNavigation}
+        options={{
+          tabBarShowLabel: false,
+          tabBarIcon: () => <AntDesign name="home" size={24} color="black" />
+        }}
+      />
+      <MainTabNavigator.Screen
+        name="Search"
+        component={SearchScreen}
+        options={{
+          tabBarShowLabel: false,
+          tabBarIcon: () => <AntDesign name="search1" size={24} color="black" />
+        }}
+      />
+      <MainTabNavigator.Screen
+        name="NewPost"
+        component={AddPostScreen}
+        options={{
+          tabBarShowLabel: false,
+          tabBarIcon: () => (
+            <AntDesign name="pluscircleo" size={24} color="black" />
+          )
+        }}
+      />
+      <MainTabNavigator.Screen
+        name="Profile"
+        component={ProfileScreen}
+        initialParams={{ id: userId }}
+        options={{
+          tabBarShowLabel: false,
+          tabBarIcon: () => <AntDesign name="profile" size={24} color="black" />
+        }}
+      />
+    </MainTabNavigator.Navigator>
+  )
+}
 
 const Navigation = () => {
   const { isFirstTime, isSignedIn } = useAuth()
@@ -105,9 +121,11 @@ export default function App () {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthContextProvider>
-        <NavigationContainer>
-          <Navigation />
-        </NavigationContainer>
+        <SafeAreaProvider>
+          <NavigationContainer>
+            <Navigation />
+          </NavigationContainer>
+        </SafeAreaProvider>
       </AuthContextProvider>
     </QueryClientProvider>
   )

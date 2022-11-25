@@ -9,7 +9,7 @@ interface Props {
 }
 
 const Space = ({ children, direction = 'column', style, ...props }: Props) => (
-  <View style={[style, { flexDirection: direction }]} {...props}>
+  <View style={[style, { flex: 1, flexDirection: direction }]} {...props}>
     {children.map((child: ReactNode, index: any) => (
       <View
         key={index}

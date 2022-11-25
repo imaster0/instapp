@@ -2,7 +2,7 @@ import React from 'react'
 import { FlatList, Image } from 'react-native'
 import theme from '../Theme'
 
-const GridList = ({ posts }) => {
+const GridList = ({ posts, ...props }) => {
   return (
     <FlatList
       contentContainerStyle={{
@@ -18,6 +18,7 @@ const GridList = ({ posts }) => {
           style={{ width: 100, height: 100, margin: theme.spacings.base / 2 }}
         />
       )}
+      {...props}
     />
   )
 }

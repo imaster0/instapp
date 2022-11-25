@@ -2,7 +2,7 @@ const theme = {
   colors: {
     primary: '#BF785E',
     secondary: '#6393A6',
-    danger: 'red'
+    danger: 'grey'
   },
   fontSizes: {
     body: 16,
